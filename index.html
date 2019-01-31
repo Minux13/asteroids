@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+  	<meta charset="UTF-8">
+	 <title>Juego en el espacio</title>
+     <style type="text/css">
+         body {
+		   background-color:rgb(0, 0, 0);
+           margin: 0;
+           overflow: hidden;
+         }
+		 canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+		
+	 </style>
+    <script type="text/javascript" src="h.js"> 
+	
+		var tamanoPantallaX = 1200; // window.innerWidth;
+var tamanoPantallaY = 600; //window.innerHeight;
+var img = new Image();
+img.src = "nave.png";
+
+var flama1 = new Image();
+flama1.src = "flama.png";
+
+////Coordenadas para las flamas
+var empieza=0;
+var numFlamas=550;
+var ys=[];
+
+var w;
+for(var i=0; i<=numFlamas; i=i+2){
+
+	w=Math.floor(Math.random() * 10);
+	
+	if(w==1){
+		ys.push(Math.floor(Math.random() * (tamanoPantallaY)));
+		ys.push(tamanoPantallaX+(50*2*i));			
+		}
+	else{
+		ys.push(Math.floor(Math.random() * (tamanoPantallaY)));
+		ys.push(tamanoPantallaX+(50*i));
+	}
+			
+}
+
+/////Coordenadas para las estrellas
+var starsX=[];
+var starsY=[];
+
+for(i = 0; i <= 250; i++){
+     // Obtinee numero aleatorios
+	starsX.push(Math.floor(Math.random() * (tamanoPantallaX-1)));
+    starsY.push(Math.floor(Math.random() * (tamanoPantallaY-1)));
+}
+ 
+
+function canvasJuego(){
+
+  canvas = document.getElementById("myCanvas");
+
+    if (canvas.getContext) {
+       ctx = canvas.getContext("2d");
+/*
+		myCanvas.style.width = (canvas.width * scale) + "px";
+        myCanvas.style.height = (canvas.height * scale) + "px";
+				
+		console.log(tamanoPantallaX+"  y  "+tamanoPantallaY);
+		//console.log(ctx.widht);
+*/
+       // Fondo negro
+       ctx.fillStyle = "black";
+       ctx.rect(0, 0, tamanoPantallaX, tamanoPantallaY);
+       ctx.fill();
+
+       // Dibuja las estrellas.
+       stars();
+
+		ctx.drawImage(img, 0, 0);
+		
+	    setInterval(movimientoFlamas, 5);
+          
+    }
+}
+
+
+//Dibuja las estrellas
+function stars(){
+
+    for(var i = 0; i <= 247; i++){
+    
+		if(i<160){
+	     	 ctx.beginPath();
+			  ctx.fillStyle = "rgb(255,255,255)";
+    	      ctx.arc(starsX[i], starsY[i], 0.1, 0, Math.PI * 2, true);
+        	  ctx.closePath();
+          	  ctx.fill();
+
+		  ctx.beginPath();
+		  ctx.fillStyle = "rgba(255,255,255, 0.4)";
+          ctx.arc(starsX[i], starsY[i], 2, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.fill();
+
+		  
+		  ctx.fillStyle = "rgba(255,255,255,0.2)";
+          ctx.beginPath();
+          ctx.arc(starsX[i], starsY[i], 3.5, 0, Math.PI * 2, true);
+		  ctx.closePath();
+          ctx.fill();
+		 }
+  
+		 //Dibuja 8 estrellas mas grandes
+    	if(i >= 161 && i <= 250){
+                    
+		  ctx.beginPath();
+		  ctx.fillStyle = "rgb(255,255,255)";
+          ctx.arc(starsX[i], starsY[i], 1.8, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.fill();
+
+		  ctx.beginPath();
+		  ctx.fillStyle = "rgba(255,255,255, 0.4)";
+          ctx.arc(starsX[i], starsY[i], 2.8, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.fill();
+
+		  
+		  ctx.fillStyle = "rgba(255,255,255,0.2)";
+          ctx.beginPath();
+          ctx.arc(starsX[i], starsY[i], 4, 0, Math.PI * 2, true);
+		  ctx.closePath();
+          ctx.fill();
+   			}
+
+	 //Dibuja 8 estrellas pequeñas
+    	if(i >= 201 && i <= 250){
+		        
+          ctx.beginPath();
+		  ctx.fillStyle = "rgb(255,255,255)";
+          ctx.arc(starsX[i], starsY[i], 0.8, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.fill();
+		 }
+   	}
+}
+
+
+function movimientoFlamas(){
+
+	//Borro todo lo que haya en el canvas
+	ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
+	stars();
+	ctx.drawImage(img, 0, 0);
+	for(var j=0; j<=numFlamas; j=j+2){
+		ys[j+1]=ys[j+1]-5;
+		if(ys[j+1]>-100 && ys[j+1]<(tamanoPantallaX+150))
+			ctx.drawImage(flama1, ys[j+1], ys[j]);
+
+		if(j==numFlamas && ys[j+1]==-100){
+			alert("   Perdiste! \n Se acabo el tiempo");
+		}
+	}
+}
+	
+	</script>
+  </head>
+  
+  <body onload="canvasJuego();">
+  	<div>
+    <!--<canvas id="myCanvas" width="1000" height="500" style="background:#000; width:100%; height:100%; position:fixed; top:0; left:0">-->
+
+	<canvas id="myCanvas" width="1200" height="600">
+    </canvas>
+	</div>
+  </body>
+  <p>J</p>
+
+</html>
