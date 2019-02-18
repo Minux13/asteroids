@@ -1,48 +1,38 @@
-var gameAsteroids = {
-    height: window.innerHeight,
+var game = {
     width: window.innerWidth
-}
-
-var nave = {
-	X : 0,
-	Y : 0,
-	altura : 34,  	//altura imagen nave
-	ancho : 97 	//ancho imagen nave
-
+    ,height: window.innerHeight
+    ,init : function (){
+        imagen.nave.src = "nave.png";
+        imagen.tierra.src = "tierra.png";
+        imagen.colision.src = "colision.png";
+        imagen.uno.src = "uno.png";
+        imagen.dos.src = "dos.png";
+        imagen.tres.src = "tres.png";
+        imagen.flama.src = "flama.png";
+    }
+    ,nave: {
+        x  : 0
+        ,y : 0
+        ,height : 34
+        ,width  : 97
+        ,image  : new Image()
+    }
+    ,asteroide : {
+        ancho : 65
+        ,alto : 27
+        ,image : new Image()
+    }
 }
 
 var norepetir = 1;
-
-var asteroide = {
-	
-	ancho:65,
-	alto:27
-}
-
-var pantalla = {
-	
-	tamanoX : window.innerWidth,
-	tamanoY : window.innerHeight		
-}
-
 var imagen = {
-		
-	nave  	 : new Image(),		
 	tierra 	 : new Image(),
-	flama	 : new Image(),
 	colision : new Image(),
 	uno 	 : new Image(),
 	dos 	 : new Image(),
 	tres 	 : new Image()
 }
 
-imagen.nave.src = "nave.png";
-imagen.tierra.src = "tierra.png";
-imagen.colision.src = "colision.png";
-imagen.uno.src = "uno.png";
-imagen.dos.src = "dos.png";
-imagen.tres.src = "tres.png";
-imagen.flama.src = "flama.png";
 
 
 
@@ -84,7 +74,7 @@ for(i = 0; i <= 250; i++){
  
 var gameOver=0;
 var contador=0;
-var pausa=1;
+var pausa=false;
 
 
 
@@ -93,11 +83,14 @@ var pausa=1;
 
 
 function canvasJuego() {
+
     canvas = document.getElementById("myCanvas");
 
     canvas.setAttribute("width", gameAsteroids.width);
+    canvas.setAttribute("height", gameAsteroids.height);
 				
-    ctx = canvas.getContext("2d"), ctx.fillStyle = "black";
+    ctx = canvas.getContext("2d");
+    ctx.fillStyle = "black";
     ctx.rect(0, 0, pantalla.tamanoX, pantalla.tamanoY);
     ctx.fill();
     stars();
@@ -112,10 +105,91 @@ function mueveNave() {
 
 function stars() {
     var a, b;
-    tope <= 10 ? (a = 0, b = 2) : tope > 10 && tope <= 20 ? (a = 1, b = 1) : tope > 20 && tope <= 30 && (a = 2, b = 0, 30 == tope && (tope = 0)), tope++;
-    for (var c = 0; c <= 247; c++) c < 130 && (ctx.beginPath(), ctx.fillStyle = "rgb(255,255,255)", ctx.arc(starsX[c], starsY[c], .1, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.beginPath(), ctx.fillStyle = "rgba(255,255,255, 0.4)", ctx.arc(starsX[c], starsY[c], 2, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.fillStyle = "rgba(255,255,255,0.2)", ctx.beginPath(), ctx.arc(starsX[c], starsY[c], 3.5, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill()), c >= 131 && c <= 180 && (c < 150 ? (ctx.beginPath(), ctx.fillStyle = "rgb(255,255,255)", ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.beginPath(), ctx.fillStyle = "rgba(255,255,255, 0.4)", ctx.arc(starsX[c], starsY[c], a + 2.8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.fillStyle = "rgba(255,255,255,0.2)", ctx.beginPath(), ctx.arc(starsX[c], starsY[c], a + 4, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill()) : (ctx.beginPath(), ctx.fillStyle = "rgb(255,255,255)", ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.beginPath(), ctx.fillStyle = "rgba(255,255,255, 0.4)", ctx.arc(starsX[c], starsY[c], b + 2.8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill(), ctx.fillStyle = "rgba(255,255,255,0.2)", ctx.beginPath(), ctx.arc(starsX[c], starsY[c], b + 4, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill())), c >= 181 && c <= 240 && (c < 200 ? (ctx.beginPath(), ctx.fillStyle = "rgb(255,255,255)", ctx.arc(starsX[c], starsY[c], .6 * a + .8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill()) : (ctx.beginPath(), ctx.fillStyle = "rgb(255,255,255)", ctx.arc(starsX[c], starsY[c], .8, 0, 2 * Math.PI, !0), ctx.closePath(), ctx.fill()))
-}
+    if(tope <= 10){
+        a = 0;
+        b = 2;
+    }else if ( tope <= 20 ){
+        a = 1;
+        b = 1;
+    }else if ( tope <= 30 ){
+        a = 2;
+        b = 0;
+        if (30 == tope) {
+             tope = 0 
+        }
+    }
 
+    tope++;
+
+    for (var c = 0; c <= 247; c++){
+        if( c < 130 ) {
+            ctx.beginPath();
+            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.arc(starsX[c], starsY[c], .1, 0, 2 * Math.PI, !0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(255,255,255, 0.4)";
+            ctx.arc(starsX[c], starsY[c], 2, 0, 2 * Math.PI, !0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "rgba(255,255,255,0.2)";
+            ctx.beginPath();
+            ctx.arc(starsX[c], starsY[c], 3.5, 0, 2 * Math.PI, !0);
+            ctx.closePath();
+            ctx.fill();
+        }
+        else if ( c <= 180 ) {
+            if ( c < 150 ){
+                ctx.beginPath()
+                ctx.fillStyle = "rgb(255,255,255)"
+                ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+                ctx.beginPath()
+                ctx.fillStyle = "rgba(255,255,255, 0.4)"
+                ctx.arc(starsX[c], starsY[c], a + 2.8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+                ctx.fillStyle = "rgba(255,255,255,0.2)"
+                ctx.beginPath()
+                ctx.arc(starsX[c], starsY[c], a + 4, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+            }else {
+                ctx.beginPath()
+                ctx.fillStyle = "rgb(255,255,255)"
+                ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+                ctx.beginPath()
+                ctx.fillStyle = "rgba(255,255,255, 0.4)"
+                ctx.arc(starsX[c], starsY[c], b + 2.8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+                ctx.fillStyle = "rgba(255,255,255,0.2)"
+                ctx.beginPath()
+                ctx.arc(starsX[c], starsY[c], b + 4, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+            }
+        }else if ( c <= 240 ) {
+            if ( c < 200 ) {
+                ctx.beginPath()
+                ctx.fillStyle = "rgb(255,255,255)"
+                ctx.arc(starsX[c], starsY[c], .6 * a + .8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+            } else {
+                ctx.beginPath()
+                ctx.fillStyle = "rgb(255,255,255)"
+                ctx.arc(starsX[c], starsY[c], .8, 0, 2 * Math.PI, !0)
+                ctx.closePath()
+                ctx.fill()
+            }
+        }
+    }
+}
 
 function movimientoFlamas(){
 
@@ -198,67 +272,43 @@ function teclaPresionada(evt) {
 		
 	var d=30;  //desplazamiento
 
-		if(pausa == 1){
-
-			if(evt.keyCode == 37) {
-	
-	          // Left arrow.
+		if( !pausa ){
+			if(evt.keyCode == 37) { // Left arrow.
 	      		nave.X = nave.X - d;
 	    		if (nave.X < 0) {
 	            	nave.X = 0;
 	        	}
-	     	 }
-	          // Right arrow.
-			else if(evt.keyCode == 39){
+	     	}else if(evt.keyCode == 39){  // Right arrow.
 	    		nave.X = nave.X + d;
 	        	if (nave.X > (pantalla.tamanoX-nave.ancho)) {
 	            	nave.X = pantalla.tamanoX-nave.ancho;
 	        	}
-	        }
-	
-	
-	          // Down arrow
-			else if(evt.keyCode == 40){
-				//console.log(nave.Y)
+	        }else if(evt.keyCode == 40){ // Down arrow
 	    		nave.Y = nave.Y + d;
-				//console.log(nave.Y)
-				//console.log(nave.altura);
 	        	if (nave.Y >  (pantalla.tamanoY-nave.altura)) {
 	            	nave.Y = pantalla.tamanoY-nave.altura;
 	        	}
-	        }
-	
-	          // Up arrow 
-			else if(evt.keyCode == 38){
+	        }else if(evt.keyCode == 38){ // Up arrow
 	    		nave.Y = nave.Y - d;
 	        	if (nave.Y < 0) {
 	            	nave.Y = 0;
 	        	}
 	        }		
 		}
-		
 
 		//Pausa
-		if(evt.keyCode == 32 && pausa==1){
-			pausa = -1;
+		if(evt.keyCode == 32 && !pausa){
+			pausa = true;
 			clearInterval(reproduccion);
-		}
-
-		else if(evt.keyCode == 32 && pausa==-1){
-			pausa = 1;
+		}else if(evt.keyCode == 32 && pausa){
+			pausa = false;
 			reproduccion=setInterval(movimientoFlamas, 40);
 		}
 	
 }
 
 
-
-function evento(a) {
-    console.log(a.x, a.y)
-}
-
 function alertaPerdiste() {
     //var a = confirm("     ¡Perdiste!\nChocaste con un asteroide\n¿Deseas jugar otra vez?");
     //1 == a && location.reload(!0)
 }
-
