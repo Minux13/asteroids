@@ -60,6 +60,10 @@ var game = {
         ,stepX  : 0
         ,stepY  : 0
         ,image  : new Image()
+        ,up     : false
+        ,down   : false
+        ,left   : false
+        ,right  : false
     }
     ,asteroid : {
         width : 65
@@ -76,7 +80,8 @@ var game = {
         ,x: 0
         ,y: 0
         ,width : 272
-        ,height:272
+        ,height: 272
+        ,radio : 136
     }
     ,moveAsteroids : function(){
 
@@ -84,8 +89,24 @@ var game = {
 	    game.ctx.clearRect( 0, 0, game.width, game.height );
 
 	    //stars();
-        game.nave.x += game.nave.stepX;
-        game.nave.y += game.nave.stepY;
+        //game.nave.x = (game.nave.x <= 0 || game.nave.x >= game.width - game.nave.width ) ? 0 : game.nave.x + game.nave.stepX;
+        //game.nave.y = (game.nave.y <= 0 || game.nave.y >= game.height - game.nave.height) ? 0 : game.nave.y + game.nave.stepY;
+        //game.nave.x = (game.nave.x <= 0 ) ? game.nave.x + game.nave.stepX;
+        //game.nave.y = (game.nave.y <= 0 ) ? game.nave.y + game.nave.stepY;
+
+        var d = 20;
+
+        if(game.nave.left){
+            game.nave.x = ( game.nave.x <= 0 ) ? game.nave.x + 0 : game.nave.x - d ;
+        }else if(game.nave.right){
+            game.nave.x = ( game.nave.x >= (game.width - game.nave.width) ) ? game.nave.x + 0 : game.nave.x + d ;
+        }
+        if( game.nave.up ){
+            game.nave.y = ( game.nave.y <= 0 ) ? game.nave.y + 0 : game.nave.y - d ;
+        }else if( game.nave.down ){
+            game.nave.y = ( game.nave.y >= (game.height - game.nave.height) ) ? game.nave.y + 0 : game.nave.y + d;
+        }
+
 	    game.ctx.drawImage( game.nave.image, game.nave.x, game.nave.y );
 
 	    //Empieza desde game.firstVisibleAsteroid y va eliminando los que ya pasaron por el 0,y
@@ -132,17 +153,15 @@ var game = {
 	    game.ctx.drawImage( game.earth.image, game.earth.x , game.earth.y );
 
 	    //if(naveX>=(tamanoPantallaX-anNave-50) && naveY>=(tamanoPantallaY-alNave-50) && norepetir==1){
-	    if(norepetir  &&  ( game.nave.x >= game.earth.x    && (game.nave.y>=game.earth.y - 60 ) ||
-                            game.nave.x >= game.earth.x + 30 && (game.nave.y>=game.earth.y - 30 ) || 
-                            game.nave.x >= game.earth + 60 && (game.nave.y>=game.earth.y      )
-                          ) 
-          ){
+        //Si llega a al planeta
+	    if(norepetir  &&  Math.sqrt( (game.width - game.nave.x)^2 + (game.height - game.nave.y )^2 ) < (game.earth.radio)){
 	    	//alert("   ¡Ganaste!");
-	    	clearInterval( game.frames );
-	    	norepetir=false;
+            console.log("ganaste");
+	    	//clearInterval( game.frames );
+	    	/*norepetir=false;
 	    	for(var i=0; i<=game.numFlamas; i=i+2){
 	    		game.coordenadasFlamas[i]=-100;
-	    	}
+	    	}*/
 	    }
         /*
 	    if(contador<600){
@@ -160,17 +179,33 @@ var game = {
     ,keyPress : function (evt) {
 		
     	var d=15;  //desplazamiento
-        console.log(evt.keyCode);
+        //console.log(evt.keyCode);
         
         if( !game.pause ){
     		if(evt.keyCode == 37) { // Left arrow.
-          		game.nave.stepX = -d;
+          		//game.nave.stepX = (game.nave.x <= 0) ? 0 : -1*d ; 
+          		//game.nave.stepX = -1*d ; 
+                game.nave.left = true;
          	}else if(evt.keyCode == 39){  // Right arrow.
-        		game.nave.stepX = d;
+                /*if(game.nave.x >= (game.width - game.nave.width)){
+                    game.nave.stepX=0;
+                }else{*/
+                //    game.nave.stepX=d;
+                /*}; 
+                console.log(game.nave.stepX); */
+                game.nave.right = true;
             }else if(evt.keyCode == 40){ // Down arrow
-        		game.nave.stepY = d;
+          		//game.nave.stepY = (game.nave.y >= (game.height - game.nave.height)) ? 0 : d; 
+          		//game.nave.stepY = d; 
+                game.nave.down = true;
             }else if(evt.keyCode == 38){ // Up arrow
-                game.nave.stepY = -d;
+                /*if(game.nave.y - d <= 0){
+                    game.nave.stepY=0;
+                }else{*/
+                //    game.nave.stepY = -1*d;
+                //}; 
+                //console.log(game.nave.stepY, game.nave.y); 
+                game.nave.up = true;
             }		
     	}
 
@@ -212,13 +247,17 @@ var game = {
         
         if( !game.pause ){
     		if(evt.keyCode == 37) { // Left arrow.
-          		game.nave.stepX = 0;
+                game.nave.left = false;
+          		//game.nave.stepX = 0;
          	}else if(evt.keyCode == 39){  // Right arrow.
-        		game.nave.stepX = 0;
+        		//game.nave.stepX = 0;
+                game.nave.right = false;
             }else if(evt.keyCode == 40){ // Down arrow
-        		game.nave.stepY = 0;
+        		//game.nave.stepY = 0;
+                game.nave.down = false;
             }else if(evt.keyCode == 38){ // Up arrow
-                game.nave.stepY = 0;
+                //game.nave.stepY = 0;
+                game.nave.up = false;
             }		
     	}
     
