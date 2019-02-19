@@ -20,37 +20,9 @@
 
 		
 	 </style>
-    <script type="text/javascript" src="h.js"> 
 	
-		var tamanoPantallaX = 1200; // window.innerWidth;
-var tamanoPantallaY = 600; //window.innerHeight;
-var img = new Image();
-img.src = "nave.png";
-
-var flama1 = new Image();
-flama1.src = "flama.png";
-
-////Coordenadas para las flamas
-var empieza=0;
-var numFlamas=550;
-var ys=[];
-
-var w;
-for(var i=0; i<=numFlamas; i=i+2){
-
-	w=Math.floor(Math.random() * 10);
-	
-	if(w==1){
-		ys.push(Math.floor(Math.random() * (tamanoPantallaY)));
-		ys.push(tamanoPantallaX+(50*2*i));			
-		}
-	else{
-		ys.push(Math.floor(Math.random() * (tamanoPantallaY)));
-		ys.push(tamanoPantallaX+(50*i));
-	}
-			
-}
-
+<script>    
+/*
 /////Coordenadas para las estrellas
 var starsX=[];
 var starsY=[];
@@ -60,8 +32,9 @@ for(i = 0; i <= 250; i++){
 	starsX.push(Math.floor(Math.random() * (tamanoPantallaX-1)));
     starsY.push(Math.floor(Math.random() * (tamanoPantallaY-1)));
 }
- 
+*/
 
+/*
 function canvasJuego(){
 
   canvas = document.getElementById("myCanvas");
@@ -74,7 +47,7 @@ function canvasJuego(){
 				
 		console.log(tamanoPantallaX+"  y  "+tamanoPantallaY);
 		//console.log(ctx.widht);
-*/
+
        // Fondo negro
        ctx.fillStyle = "black";
        ctx.rect(0, 0, tamanoPantallaX, tamanoPantallaY);
@@ -89,10 +62,11 @@ function canvasJuego(){
           
     }
 }
+*/
 
 
 //Dibuja las estrellas
-function stars2(){
+/*function stars2(){
 
     for(var i = 0; i <= 247; i++){
     
@@ -151,36 +125,20 @@ function stars2(){
 		 }
    	}
 }
+*/
 
-
-function movimientoFlamas2(){
-
-	//Borro todo lo que haya en el canvas
-	ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
-	stars();
-	ctx.drawImage(img, 0, 0);
-	for(var j=0; j<=numFlamas; j=j+2){
-		ys[j+1]=ys[j+1]-5;
-		if(ys[j+1]>-100 && ys[j+1]<(tamanoPantallaX+150))
-			ctx.drawImage(flama1, ys[j+1], ys[j]);
-
-		if(j==numFlamas && ys[j+1]==-100){
-			alert("   Perdiste! \n Se acabo el tiempo");
-		}
-	}
-}
-	
-	</script>
+</script>
   </head>
   
-  <body onload="canvasJuego();">
+  <body>
   	<div>
     <!--<canvas id="myCanvas" width="1000" height="500" style="background:#000; width:100%; height:100%; position:fixed; top:0; left:0">-->
 
 	<canvas id="myCanvas" >
     </canvas>
 	</div>
+    
+    <script type="text/javascript" src="h.js"></script>
   </body>
-  <p>J</p>
 
 </html>
