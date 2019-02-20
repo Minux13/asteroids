@@ -154,7 +154,10 @@ var game = {
 
 	    //if(naveX>=(tamanoPantallaX-anNave-50) && naveY>=(tamanoPantallaY-alNave-50) && norepetir==1){
         //Si llega a al planeta
-	    if(norepetir  &&  Math.sqrt( (game.width - game.nave.x)^2 + (game.height - game.nave.y )^2 ) < (game.earth.radio)){
+        naveX = (game.width - (game.nave.x+game.nave.width)) * (game.width - (game.nave.x+game.nave.width));
+        naveY = (game.height - (game.nave.y+game.nave.height-30)) * (game.height - (game.nave.y+game.nave.height));
+        radio =  Math.sqrt( naveX + naveY );
+	    if(norepetir  &&  radio < game.earth.radio){
 	    	//alert("   ¡Ganaste!");
             console.log("ganaste");
 	    	//clearInterval( game.frames );
