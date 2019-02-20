@@ -43,12 +43,18 @@ var game = {
         game.ctx.rect(0, 0, game.width, game.height);
         game.ctx.fill();
 
-        /////////////stars();
+        for(i = 0; i <= 250; i++){
+             // Obtinee numero aleatorios
+        	game.stars.xs.push(Math.floor(Math.random() * (game.width-1)));
+            game.stars.ys.push(Math.floor(Math.random() * (game.height-1)));
+        }
+
+
+
+        game.stars.animation();
         game.frames = setInterval(game.moveAsteroids, 40);
-        setTimeout(function() {
-            window.addEventListener("keydown", game.keyPress, !0)
-            window.addEventListener("keyup", game.keyUp, !0)
-        }, 1800)
+        window.addEventListener("keydown", game.keyPress, !0);
+        window.addEventListener("keyup", game.keyUp, !0);
 
 
     }
@@ -69,8 +75,8 @@ var game = {
         ,image : new Image()
     }
     ,colision : {
-        x : 0
-        ,y: 0
+        x : -200
+        ,y: -200
         ,image: new Image()
         ,width : 60
         ,height : 60
@@ -83,16 +89,16 @@ var game = {
         ,height: 272
         ,radio : 136
     }
+    ,asteroidColisioned : {
+        x: -500
+        ,y: -500
+    }
     ,moveAsteroids : function(){
 
 	    //Borro todo lo que haya en el canvas
 	    game.ctx.clearRect( 0, 0, game.width, game.height );
 
-	    //stars();
-        //game.nave.x = (game.nave.x <= 0 || game.nave.x >= game.width - game.nave.width ) ? 0 : game.nave.x + game.nave.stepX;
-        //game.nave.y = (game.nave.y <= 0 || game.nave.y >= game.height - game.nave.height) ? 0 : game.nave.y + game.nave.stepY;
-        //game.nave.x = (game.nave.x <= 0 ) ? game.nave.x + game.nave.stepX;
-        //game.nave.y = (game.nave.y <= 0 ) ? game.nave.y + game.nave.stepY;
+	    game.stars.animation();
 
         var d = 20;
 
@@ -112,6 +118,7 @@ var game = {
 	    //Empieza desde game.firstVisibleAsteroid y va eliminando los que ya pasaron por el 0,y
 	    //Tambiél dentro del for solo va todo lo relacionado con las flamas 
 	    for(var j=game.firstVisibleAsteroid; j<=game.numFlamas; j=j+2){
+            //Actualiza el primer asteroide visible del arreglo para empezar el for desde ahi
 	    	if( game.coordenadasFlamas[game.firstVisibleAsteroid+1]==-100 ){
 	    	    game.firstVisibleAsteroid+=2;				
 	    	}
@@ -131,12 +138,17 @@ var game = {
 
 	    			game.colision.x = game.coordenadasFlamas[j+1] - (game.colision.width/2);
 	    			game.colision.y = game.nave.y + (game.nave.height/2) + mediaNaveAsteroidY - (game.colision.height/2);
+
+                    game.asteroidColisioned.x = game.coordenadasFlamas[j+1];
+                    game.asteroidColisioned.y = game.coordenadasFlamas[j];
 	    			
 	    			clearInterval( game.frames );
 
 	    			game.ctx.drawImage( game.colision.image, game.colision.x , game.colision.y, game.colision.width, game.colision.height );
 	    		
-	    			setTimeout(function(){ game.messageLost() }, 700);
+	    			game.messageLost();
+                    //game.frames = setInterval(game.finalFrames, 40);
+                    setTimeout(function(){game.frames = setInterval(game.finalFrames, 40)},1000);
 	    			//setTimeout(function(){  game.frames = setInterval(game.moveAsteroids, 40)  }, 1500);
 
 	    		}			
@@ -157,18 +169,15 @@ var game = {
 
 	    //if(naveX>=(tamanoPantallaX-anNave-50) && naveY>=(tamanoPantallaY-alNave-50) && norepetir==1){
         //Si llega a al planeta
-        naveX = (game.width - (game.nave.x+game.nave.width)) * (game.width - (game.nave.x+game.nave.width));
-        naveY = (game.height - (game.nave.y+game.nave.height-30)) * (game.height - (game.nave.y+game.nave.height));
-        radio =  Math.sqrt( naveX + naveY );
-	    if(norepetir  &&  radio < game.earth.radio){
+        var naveX = (game.width - (game.nave.x+game.nave.width)) * (game.width - (game.nave.x+game.nave.width));
+        var naveY = (game.height - (game.nave.y+game.nave.height-30)) * (game.height - (game.nave.y+game.nave.height));
+        var radio =  Math.sqrt( naveX + naveY );
+	    if( radio < game.earth.radio ){
 	    	//alert("   ¡Ganaste!");
 	        game.ctx.drawImage( game.nave.image, game.nave.x, game.nave.y );
-            console.log("ganaste");
 	    	clearInterval( game.frames );
-	    	norepetir=false;
-	    	for(var i=0; i<=game.numFlamas; i=i+2){
-	    		game.coordenadasFlamas[i]=-100;
-	    	}
+            game.messageWin();
+            setTimeout(function(){game.frames = setInterval(game.finalFrames, 40)},1000);
 	    }
         /*
 	    if(contador<600){
@@ -184,62 +193,19 @@ var game = {
     }
     ,pause : false
     ,keyPress : function (evt) {
-		
-    	var d=15;  //desplazamiento
-        //console.log(evt.keyCode);
         
         if( !game.pause ){
     		if(evt.keyCode == 37) { // Left arrow.
-          		//game.nave.stepX = (game.nave.x <= 0) ? 0 : -1*d ; 
-          		//game.nave.stepX = -1*d ; 
                 game.nave.left = true;
          	}else if(evt.keyCode == 39){  // Right arrow.
-                /*if(game.nave.x >= (game.width - game.nave.width)){
-                    game.nave.stepX=0;
-                }else{*/
-                //    game.nave.stepX=d;
-                /*}; 
-                console.log(game.nave.stepX); */
                 game.nave.right = true;
             }else if(evt.keyCode == 40){ // Down arrow
-          		//game.nave.stepY = (game.nave.y >= (game.height - game.nave.height)) ? 0 : d; 
-          		//game.nave.stepY = d; 
                 game.nave.down = true;
             }else if(evt.keyCode == 38){ // Up arrow
-                /*if(game.nave.y - d <= 0){
-                    game.nave.stepY=0;
-                }else{*/
-                //    game.nave.stepY = -1*d;
-                //}; 
-                //console.log(game.nave.stepY, game.nave.y); 
                 game.nave.up = true;
             }		
     	}
-
-    	/*if( !game.pause ){
-    		if(evt.keyCode == 37) { // Left arrow.
-          		game.nave.x = game.nave.x - d;
-        		if (game.nave.x < 0) {
-                	game.nave.x = 0;
-            	}
-         	}else if(evt.keyCode == 39){  // Right arrow.
-        		game.nave.x = game.nave.x + d;
-            	if (game.nave.x > (game.width - game.nave.width)) {
-                	game.nave.x = game.width - game.nave.width;
-            	}
-            }else if(evt.keyCode == 40){ // Down arrow
-        		game.nave.y = game.nave.y + d;
-            	if (game.nave.y >  ( game.height - game.nave.height)) {
-                	game.nave.y = game.height - game.nave.height;
-            	}
-            }else if(evt.keyCode == 38){ // Up arrow
-                game.nave.y = game.nave.y - d;
-            	if (game.nave.y < 0) {
-                	game.nave.y = 0;
-            	}
-            }		
-    	}*/
-    
+        
     	//Pausa
     	if(evt.keyCode == 32 && !game.pause){
     		game.pause = true;
@@ -255,15 +221,11 @@ var game = {
         if( !game.pause ){
     		if(evt.keyCode == 37) { // Left arrow.
                 game.nave.left = false;
-          		//game.nave.stepX = 0;
          	}else if(evt.keyCode == 39){  // Right arrow.
-        		//game.nave.stepX = 0;
                 game.nave.right = false;
             }else if(evt.keyCode == 40){ // Down arrow
-        		//game.nave.stepY = 0;
                 game.nave.down = false;
             }else if(evt.keyCode == 38){ // Up arrow
-                //game.nave.stepY = 0;
                 game.nave.up = false;
             }		
     	}
@@ -276,7 +238,6 @@ var game = {
     		game.pause = false;
     		game.frames = setInterval(game.moveAsteroids, 40);
     	}
-	
     }
     ,messageLost : function(){
         var node = document.createElement("div");
@@ -285,124 +246,113 @@ var game = {
         var body = document.getElementById('body');
         body.appendChild(node);
     }
+    ,messageWin : function(){
+        var node = document.createElement("div");
+        node.setAttribute('id','gameover');
+        node.innerHTML = '<span id="">¡Ganaste!</span><br><br> <button onclick="location.reload();"> Jugar otra vez </button>';
+        var body = document.getElementById('body');
+        body.appendChild(node);
+       
+    }
+    ,finalFrames: function(){
+	    game.ctx.clearRect( 0, 0, game.width, game.height );
+        game.stars.animation();
+	    game.ctx.drawImage( game.nave.image, game.nave.x, game.nave.y );
+	    game.ctx.drawImage( game.asteroid.image, game.asteroidColisioned.x, game.asteroidColisioned.y);
+	    game.ctx.drawImage( game.colision.image, game.colision.x , game.colision.y, game.colision.width, game.colision.height );
+	    game.ctx.drawImage( game.earth.image, game.earth.x , game.earth.y );
+    }
+    ,stars : {
+        xs : []
+        ,ys: []
+        ,patron : 0
+        ,animation: function(){
+            var a, b;
+            if(game.stars.patron <= 10){
+                a = 0, b = 2;
+            }else if ( game.stars.patron <= 20 ){
+                a = 1, b = 1;
+            }else if ( game.stars.patron <= 30 ){
+                a = 2, b = 0;
+                if (30 == game.stars.patron) {
+                     game.stars.patron = 0 
+                }
+            }
+            game.stars.patron ++;
 
-
-
+            for (var c = 0; c <= 247; c++){
+                if( c < 130 ) {
+                    game.ctx.beginPath();
+                    game.ctx.fillStyle = "rgb(255,255,255)";
+                    game.ctx.arc(game.stars.xs[c], game.stars.ys[c], .1, 0, 2 * Math.PI, !0);
+                    game.ctx.closePath();
+                    game.ctx.fill();
+                    game.ctx.beginPath();
+                    game.ctx.fillStyle = "rgba(255,255,255, 0.4)";
+                    game.ctx.arc(game.stars.xs[c], game.stars.ys[c], 2, 0, 2 * Math.PI, !0);
+                    game.ctx.closePath();
+                    game.ctx.fill();
+                    game.ctx.fillStyle = "rgba(255,255,255,0.2)";
+                    game.ctx.beginPath();
+                    game.ctx.arc(game.stars.xs[c], game.stars.ys[c], 3.5, 0, 2 * Math.PI, !0);
+                    game.ctx.closePath();
+                    game.ctx.fill();
+                }
+                else if ( c <= 180 ) {
+                    if ( c < 150 ){
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgb(255,255,255)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], 1.8, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgba(255,255,255, 0.4)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], a + 3.5, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                        game.ctx.fillStyle = "rgba(255,255,255,0.2)"
+                        game.ctx.beginPath()
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], a + 4, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                    }else {
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgb(255,255,255)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], 1.8, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgba(255,255,255, 0.4)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], b + 2.8, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                        game.ctx.fillStyle = "rgba(255,255,255,0.2)"
+                        game.ctx.beginPath()
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], b + 4, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                    }
+                }else if ( c <= 240 ) {
+                    if ( c < 200 ) {
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgb(255,255,255)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], .6 * a + .8, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                    } else {
+                        game.ctx.beginPath()
+                        game.ctx.fillStyle = "rgb(255,255,255)"
+                        game.ctx.arc(game.stars.xs[c], game.stars.ys[c], .8, 0, 2 * Math.PI, !0)
+                        game.ctx.closePath()
+                        game.ctx.fill()
+                    }
+                }
+            }
+        }
+    }
 }
 
-var norepetir = true;
-
- 
 var contador=0;
 
 game.init()
 
-
-
-function alertaPerdiste() {
-    //var a = confirm("     ¡Perdiste!\nChocaste con un asteroide\n¿Deseas jugar otra vez?");
-    //1 == a && location.reload(!0)
-}
-
-
-
-
-/*
-
-/////Coordenadas para las estrellas
-var starsX=[];
-var starsY=[];
-var tope=0;
-
-
-
-for(i = 0; i <= 250; i++){
-     // Obtinee numero aleatorios
-	starsX.push(Math.floor(Math.random() * (pantalla.tamanoX-1)));
-    starsY.push(Math.floor(Math.random() * (pantalla.tamanoY-1)));
-}
-
-function stars() {
-    var a, b;
-    if(tope <= 10){
-        a = 0, b = 2;
-    }else if ( tope <= 20 ){
-        a = 1, b = 1;
-    }else if ( tope <= 30 ){
-        a = 2, b = 0;
-        if (30 == tope) {
-             tope = 0 
-        }
-    }
-    tope++;
-
-    for (var c = 0; c <= 247; c++){
-        if( c < 130 ) {
-            ctx.beginPath();
-            ctx.fillStyle = "rgb(255,255,255)";
-            ctx.arc(starsX[c], starsY[c], .1, 0, 2 * Math.PI, !0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.fillStyle = "rgba(255,255,255, 0.4)";
-            ctx.arc(starsX[c], starsY[c], 2, 0, 2 * Math.PI, !0);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = "rgba(255,255,255,0.2)";
-            ctx.beginPath();
-            ctx.arc(starsX[c], starsY[c], 3.5, 0, 2 * Math.PI, !0);
-            ctx.closePath();
-            ctx.fill();
-        }
-        else if ( c <= 180 ) {
-            if ( c < 150 ){
-                ctx.beginPath()
-                ctx.fillStyle = "rgb(255,255,255)"
-                ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-                ctx.beginPath()
-                ctx.fillStyle = "rgba(255,255,255, 0.4)"
-                ctx.arc(starsX[c], starsY[c], a + 2.8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-                ctx.fillStyle = "rgba(255,255,255,0.2)"
-                ctx.beginPath()
-                ctx.arc(starsX[c], starsY[c], a + 4, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-            }else {
-                ctx.beginPath()
-                ctx.fillStyle = "rgb(255,255,255)"
-                ctx.arc(starsX[c], starsY[c], 1.8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-                ctx.beginPath()
-                ctx.fillStyle = "rgba(255,255,255, 0.4)"
-                ctx.arc(starsX[c], starsY[c], b + 2.8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-                ctx.fillStyle = "rgba(255,255,255,0.2)"
-                ctx.beginPath()
-                ctx.arc(starsX[c], starsY[c], b + 4, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-            }
-        }else if ( c <= 240 ) {
-            if ( c < 200 ) {
-                ctx.beginPath()
-                ctx.fillStyle = "rgb(255,255,255)"
-                ctx.arc(starsX[c], starsY[c], .6 * a + .8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-            } else {
-                ctx.beginPath()
-                ctx.fillStyle = "rgb(255,255,255)"
-                ctx.arc(starsX[c], starsY[c], .8, 0, 2 * Math.PI, !0)
-                ctx.closePath()
-                ctx.fill()
-            }
-        }
-    }
-}
-*/

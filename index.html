@@ -29,7 +29,10 @@
     color: white;
     text-align: center;
     font-size: 3em;
-    transition: all 3s ease;
+    -webkit-animation-name: showmessage; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 1s; /* Safari 4.0 - 8.0 */
+    animation-name: showmessage;
+    animation-duration: 1s;
     /*padding: 20px;*/
 }
 #gameover button{
@@ -38,6 +41,10 @@
     border: none;
     box-shadow: 0px 6px 10px #444;
     cursor: pointer;
+}
+@keyframes showmessage {
+    0%   {top:0px;opacity:0;}
+    100% {top:20%;opacity:1;}
 }
 
 		
