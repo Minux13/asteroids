@@ -57,8 +57,6 @@ var game = {
         ,y : 0
         ,height : 34
         ,width  : 97
-        ,stepX  : 0
-        ,stepY  : 0
         ,image  : new Image()
         ,up     : false
         ,down   : false
@@ -74,6 +72,8 @@ var game = {
         x : 0
         ,y: 0
         ,image: new Image()
+        ,width : 60
+        ,height : 60
     }
     ,earth : {
         image: new Image()
@@ -121,24 +121,27 @@ var game = {
 	    	if( game.coordenadasFlamas[j+1] >- 100 && game.coordenadasFlamas[j+1] < (game.width + 150)){
 	    		game.ctx.drawImage(game.asteroid.image, game.coordenadasFlamas[j+1], game.coordenadasFlamas[j]);
 	    	}
-/*
+
 	    	//Choco con un asteroid
 	    	if(game.coordenadasFlamas[j+1] > (game.nave.x + 32) && game.coordenadasFlamas[j+1] < (game.nave.x+game.nave.width)){
 	    		if((game.coordenadasFlamas[j]+game.asteroid.height)>(game.nave.y+6) && game.coordenadasFlamas[j]<(game.nave.y+game.nave.height-6)){
+                    
+                    // (FY + FH/2 - NY + NH/2)/2   El punto medio del espacio que hay entre cada punto medio Y de los dos objetos flama-asteroide y nave
+                    var mediaNaveAsteroidY = (game.coordenadasFlamas[j] + (game.colision.height/2) - (game.nave.y + (game.nave.height/2) ))/2;
 
-	    			game.colision.x = game.nave.x + 60;
-	    			game.colision.y = game.nave.y - 15;
+	    			game.colision.x = game.coordenadasFlamas[j+1] - (game.colision.width/2);
+	    			game.colision.y = game.nave.y + (game.nave.height/2) + mediaNaveAsteroidY - (game.colision.height/2);
 	    			
-                    ////////////////////////////
 	    			clearInterval( game.frames );
-	    			game.ctx.drawImage( game.colision.image, game.colision.x , game.colision.y );
+
+	    			game.ctx.drawImage( game.colision.image, game.colision.x , game.colision.y, game.colision.width, game.colision.height );
 	    		
-                    ///////////////////////////	
-	    			setTimeout(function(){ alertaPerdiste() }, 700);
+	    			setTimeout(function(){ game.messageLost() }, 700);
+	    			//setTimeout(function(){  game.frames = setInterval(game.moveAsteroids, 40)  }, 1500);
 
 	    		}			
 	    	}
-            */
+            
             
             /*
 	    	//Cuando se acaban las flamas, lo comparo con j por que vuelve a iniciar el ciclo y
@@ -159,12 +162,13 @@ var game = {
         radio =  Math.sqrt( naveX + naveY );
 	    if(norepetir  &&  radio < game.earth.radio){
 	    	//alert("   ¡Ganaste!");
+	        game.ctx.drawImage( game.nave.image, game.nave.x, game.nave.y );
             console.log("ganaste");
-	    	//clearInterval( game.frames );
-	    	/*norepetir=false;
+	    	clearInterval( game.frames );
+	    	norepetir=false;
 	    	for(var i=0; i<=game.numFlamas; i=i+2){
 	    		game.coordenadasFlamas[i]=-100;
-	    	}*/
+	    	}
 	    }
         /*
 	    if(contador<600){
@@ -274,7 +278,13 @@ var game = {
     	}
 	
     }
-
+    ,messageLost : function(){
+        var node = document.createElement("div");
+        node.setAttribute('id','gameover');
+        node.innerHTML = '<span id="">¡Perdiste!</span><br><br> <button onclick="location.reload();"> Jugar otra vez </button>';
+        var body = document.getElementById('body');
+        body.appendChild(node);
+    }
 
 
 
